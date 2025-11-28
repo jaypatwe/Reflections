@@ -1,0 +1,2 @@
+truncate table reflections cascade;
+
