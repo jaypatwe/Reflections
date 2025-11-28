@@ -21,7 +21,7 @@ export default async function FriendsPage() {
     redirect('/auth/login')
   }
 
-  // Fetch all friendships
+  // Fetch all friendships where the user is either the sender or receiver
   const { data: friendships } = await supabase
     .from('friends')
     .select(`
@@ -93,12 +93,18 @@ export default async function FriendsPage() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <form action={acceptFriendRequest.bind(null, request.id)}>
+                    <form action={async () => {
+                      'use server'
+                      await acceptFriendRequest(request.id)
+                    }}>
                       <Button size="sm" variant="outline" className="h-8 border-green-200 hover:bg-green-50 text-green-700 hover:text-green-800 text-xs font-medium">
                         <Check className="w-3.5 h-3.5 mr-1" /> Accept
                       </Button>
                     </form>
-                    <form action={removeFriend.bind(null, request.id)}>
+                    <form action={async () => {
+                      'use server'
+                      await removeFriend(request.id)
+                    }}>
                       <Button size="sm" variant="ghost" className="h-8 text-[#9B9A97] hover:text-red-600 hover:bg-red-50">
                         <X className="w-4 h-4" />
                       </Button>
@@ -128,7 +134,10 @@ export default async function FriendsPage() {
                         <p className="text-xs text-[#9B9A97]">{getSubtext(friend)}</p>
                       </div>
                     </div>
-                    <form action={removeFriend.bind(null, friendship.id)}>
+                    <form action={async () => {
+                      'use server'
+                      await removeFriend(friendship.id)
+                    }}>
                       <Button size="sm" variant="ghost" className="opacity-0 group-hover:opacity-100 text-[#9B9A97] hover:text-red-600 hover:bg-red-50 h-8 text-xs transition-all">
                         Remove
                       </Button>
